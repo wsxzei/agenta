@@ -1,0 +1,41 @@
+{
+    "name": "agenta-learning",
+    "version": "0.1.0",
+    "private": true,
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "lint-fix": "next lint --fix",
+        "format": "prettier --check .",
+        "format-fix": "prettier --write .",
+        "types:check": "tsc"
+    },
+    "dependencies": {
+        "@tanstack/react-query": "^5.90.12",
+        "antd": "^6.1.0",
+        "axios": "^1.12.2",
+        "classnames": "^2.3.2",
+        "clsx": "^2.1.1",
+        "jotai": "^2.16.0",
+        "jotai-tanstack-query": "^0.11.0",
+        "next": "15.5.9",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.8.10",
+        "@types/react": "^19.0.10",
+        "@types/react-dom": "^19.0.4",
+        "autoprefixer": "10.4.20",
+        "postcss": "^8.5.6",
+        "prettier": "^3.0.0",
+        "tailwindcss": "^3.4.4",
+        "typescript": "5.8.3"
+    }
+}
+

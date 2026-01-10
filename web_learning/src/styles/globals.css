@@ -1,0 +1,23 @@
+/*
+    base: 基础样式
+    components: 组件样式（如 .btn-primary）
+    utilities: 工具类（如 flex, p-4）
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+    CSS Reset 部分，确保所有元素默认样式一致，避免浏览器差异。
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
