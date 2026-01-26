@@ -3,9 +3,10 @@ FROM python:3.11-slim
 ARG ROOT_PATH=/
 ENV ROOT_PATH=${ROOT_PATH}
 
+# 容器内所有命令的工作目录
 WORKDIR /app/
 
-RUN pip install --upgrade pip 
+RUN pip install --upgrade pip
 
 COPY ./requirements.txt /app/requirements.txt
 
@@ -13,6 +14,7 @@ RUN pip install -r requirements.txt
 
 COPY ./oss /app/oss/
 
+# 设置了容器的 PYTHONPATH, 使 Python 在查找模块时优先查找/sdk目录
 ENV PYTHONPATH=/sdk:$PYTHONPATH
 
 EXPOSE 80

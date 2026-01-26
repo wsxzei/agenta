@@ -190,6 +190,8 @@ services:
 
     completion:
         build:
+            # 指定构建镜像时的上下文路径, 构建过程中所有操作的根目录（影响宿主机的构建路径）, 决定了 COPY 指令复制的文件
+            # Dockerfile 的 WORKDIR 指令设置容器内后续指令的工作目录（影响容器内的运行和构建路径）
             context: ../../../services/completion
             dockerfile: oss/docker/Dockerfile.dev
 
@@ -354,7 +356,7 @@ services:
         restart: always
 
     supertokens:
-        image: registry.supertokens.io/supertokens/supertokens-postgresql
+        image: supertokens/supertokens-postgresql
 
         depends_on:
             postgres:

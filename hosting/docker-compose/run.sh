@@ -115,7 +115,7 @@ if [[ ! -f "$COMPOSE_FILE" ]]; then
 fi
 
 # Construct Docker Compose command
-COMPOSE_CMD="docker compose -f $COMPOSE_FILE"
+COMPOSE_CMD="docker-compose -f $COMPOSE_FILE"
 
 # If ENV_FILE is not provided, set it explicitly
 if [[ -z "$ENV_FILE" ]]; then
