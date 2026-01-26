@@ -93,13 +93,22 @@ export const runInvocation = async (params: RunInvocationParams): Promise<Invoca
             application_id: appId,
             project_id: projectId,
         })
+        const requestUrl = `${testUrl}?${queryParams.toString()}`
 
-        const response = await axios.post(`${testUrl}?${queryParams.toString()}`, requestBody, {
+        // http://localhost/services/completion/test?application_id=019b8f1f-7d3d-7802-a290-69ebd63676a5&project_id=019b8efe-e578-7bf3-8c47-f6b8b67f6849
+        console.log("[runInvocation] Request URL:", requestUrl)
+
+        console.log("[runInvocation] Request Body:", JSON.stringify(requestBody, null, 2))
+
+        // 请求大模型接口
+        const response = await axios.post(requestUrl, requestBody, {
             headers: {
                 "Content-Type": "application/json",
                 "ngrok-skip-browser-warning": "1",
             },
         })
+
+        console.log("[runInvocation] Response:", JSON.stringify(response.data, null, 2))
 
         // 2. Extract trace_id and span_id from the response
         // The response may contain trace info in different locations
@@ -133,7 +142,7 @@ export const runInvocation = async (params: RunInvocationParams): Promise<Invoca
             spanId,
         }
     } catch (error: any) {
-        console.error("[runInvocation] Error:", error)
+        console.error("[runInvocation] Error:", JSON.stringify(error, null, 2))
 
         // Extract error message from various response formats
         const extractErrorMessage = (err: any): string => {
@@ -155,6 +164,9 @@ export const runInvocation = async (params: RunInvocationParams): Promise<Invoca
         }
 
         const errorMessage = extractErrorMessage(error)
+        const stacktrace = error?.response?.data?.detail?.stacktrace || error?.stack
+        console.log("[runInvocation] errorMessage:", errorMessage)
+        console.log("[runInvocation] stacktrace:", stacktrace)
 
         // Update step result with failure status and error details
         try {
@@ -166,7 +178,7 @@ export const runInvocation = async (params: RunInvocationParams): Promise<Invoca
                 references,
                 error: {
                     message: errorMessage,
-                    stacktrace: error?.response?.data?.detail?.stacktrace || error?.stack,
+                    stacktrace: stacktrace,
                 },
             })
 

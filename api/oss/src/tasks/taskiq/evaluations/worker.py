@@ -60,7 +60,9 @@ class EvaluationsWorker:
         self.workflows_service = workflows_service
         self.evaluations_service = evaluations_service
 
+        log.info("[EvaluationsWorker] Worker initialized, registering tasks...")
         self._register_tasks()
+        log.info("[EvaluationsWorker] Tasks registered successfully")
 
     def _register_tasks(self):
         """Register all evaluation tasks with the broker."""
@@ -85,9 +87,13 @@ class EvaluationsWorker:
         ) -> Any:
             """Legacy annotation task - wraps the existing annotate function."""
             log.info(
-                "[TASK] Starting evaluate_batch_testset",
+                "[EvaluationsWorker.evaluate_batch_testset] Starting evaluate_batch_testset",
                 project_id=str(project_id),
                 user_id=str(user_id),
+                run_id=str(run_id),
+                testset_id=testset_id,
+                revision_id=revision_id,
+                autoeval_ids=autoeval_ids,
             )
 
             # Call the async annotate function directly
@@ -111,7 +117,11 @@ class EvaluationsWorker:
                 workflows_service=self.workflows_service,
                 evaluations_service=self.evaluations_service,
             )
-            log.info("[TASK] Completed evaluate_batch_testset")
+            log.info(
+                "[EvaluationsWorker.evaluate_batch_testset] Completed evaluate_batch_testset",
+                project_id=str(project_id),
+                run_id=str(run_id),
+            )
             return result
 
         @self.broker.task(

@@ -127,8 +127,8 @@ class entrypoint:
     routes = list()
 
     _middleware = False
-    _run_path = f"{AGENTA_RUNTIME_PREFIX}/run"
-    _test_path = f"{AGENTA_RUNTIME_PREFIX}/test"
+    _run_path = f"{AGENTA_RUNTIME_PREFIX}/run"  # /run 端点用于正式部署后的运行
+    _test_path = f"{AGENTA_RUNTIME_PREFIX}/test"  # /test 端点专用于测试和评估场景
     _config_key = "ag_config"
     # LEGACY
     _legacy_generate_path = f"{AGENTA_RUNTIME_PREFIX}/generate"

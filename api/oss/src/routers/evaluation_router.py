@@ -174,6 +174,16 @@ router = APIRouter()
 log = get_module_logger(__name__)
 
 
+# Debug: Print evaluations_worker evaluate_batch_testset metadata
+log.info(f"[EVALUATION_ROUTER] evaluations_worker type: {type(evaluations_worker)}")
+log.info(f"[EVALUATION_ROUTER] evaluations_worker has evaluate_batch_testset: {hasattr(evaluations_worker, 'evaluate_batch_testset')}")
+if hasattr(evaluations_worker, 'evaluate_batch_testset'):
+    log.info(f"[EVALUATION_ROUTER] evaluate_batch_testset: {evaluations_worker.evaluate_batch_testset}")
+    log.info(f"[EVALUATION_ROUTER] evaluate_batch_testset type: {type(evaluations_worker.evaluate_batch_testset)}")
+    log.info(f"[EVALUATION_ROUTER] evaluate_batch_testset module: {evaluations_worker.evaluate_batch_testset.__module__}")
+    log.info(f"[EVALUATION_ROUTER] evaluate_batch_testset qualname: {evaluations_worker.evaluate_batch_testset.__qualname__}")
+
+
 @router.get(
     "/by_resource/",
     response_model=List[str],
@@ -557,6 +567,7 @@ async def start_evaluation(
     request: Request,
     payload: NewEvaluation,
 ) -> EvaluationRunsResponse:
+    log.info(f"[evaluation_router.start_evaluation] request: {request}, payload: {payload}")
     try:
         if is_ee():
             # Permissions Check ------------------------------------------------

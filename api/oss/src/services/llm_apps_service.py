@@ -1,17 +1,18 @@
-import json
 import asyncio
+import json
 import traceback
-import aiohttp
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from oss.src.utils.logging import get_module_logger
-from oss.src.utils import common
+import aiohttp
+from oss.src.apis.fastapi.tracing.utils import make_hash_id
+from oss.src.models.shared_models import InvokationResult, Result, Error
 from oss.src.services import helpers
 from oss.src.services.auth_service import sign_secret_token
 from oss.src.services.db_manager import get_project_by_id
-from oss.src.apis.fastapi.tracing.utils import make_hash_id
-from oss.src.models.shared_models import InvokationResult, Result, Error
+from oss.src.utils import common
+from oss.src.utils.debug_helpers import ObjectDebugger, log_object
+from oss.src.utils.logging import get_module_logger
 
 log = get_module_logger(__name__)
 
@@ -256,6 +257,13 @@ async def invoke_app(
                 ),
                 url=url,
             )
+
+            # 调试：记录请求payload
+            # ObjectDebugger.inspect_variables(
+            #     request_payload=payload,
+            #     request_headers={k: v for k, v in headers.items() if k.lower() != 'authorization'}
+            # )
+
             response = await client.post(
                 url,
                 json=payload,
@@ -263,6 +271,11 @@ async def invoke_app(
                 timeout=900,
             )
             app_response = await response.json()
+
+            # 调试：记录响应数据
+            # ObjectDebugger.inspect_response(app_response, f"scenario_id={scenario_id}")
+            ObjectDebugger.inspect_object(app_response, name="app_response")
+
             response.raise_for_status()
 
             (
@@ -296,14 +309,35 @@ async def invoke_app(
             )
 
         except aiohttp.ClientResponseError as e:
-            error_message = app_response.get("detail", {}).get(
-                "error", f"HTTP error {e.status}: {e.message}"
-            )
-            stacktrace = app_response.get("detail", {}).get(
-                "message"
-            ) or app_response.get("detail", {}).get(
-                "traceback", "".join(traceback.format_exception_only(type(e), e))
-            )
+            detail = app_response.get("detail", {})
+
+            if isinstance(detail, dict):
+                # Get detail.message as the primary error message
+                if "message" in detail and detail["message"]:
+                    error_message = detail["message"]
+                elif "error" in detail and detail["error"]:
+                    error_message = detail["error"]
+                else:
+                    error_message = f"HTTP error {e.status}: {e.message}"
+            else:
+                # If detail is not a dict, use HTTP error info directly
+                error_message = f"HTTP error {e.status}: {e.message}"
+
+            if isinstance(detail, dict):
+                raw_stacktrace = detail.get("stacktrace")
+                # detail.stacktrace might be a list of strings
+                if raw_stacktrace:
+                    if isinstance(raw_stacktrace, list):
+                        stacktrace = "".join(str(item) for item in raw_stacktrace)
+                    elif isinstance(raw_stacktrace, str):
+                        stacktrace = raw_stacktrace
+                    else:
+                        stacktrace = str(raw_stacktrace)
+                else:
+                    stacktrace = "".join(traceback.format_exception_only(type(e), e))
+            else:
+                stacktrace = "".join(traceback.format_exception_only(type(e), e))
+
             log.error(f"HTTP error occurred during request: {error_message}")
         except aiohttp.ServerTimeoutError as e:
             error_message = "Request timed out"

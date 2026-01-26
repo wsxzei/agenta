@@ -1176,6 +1176,9 @@ class EvaluationsRouter:
         *,
         result_query_request: EvaluationResultQueryRequest,
     ) -> EvaluationResultsResponse:
+        # 打印请求参数
+        # log.info(f"[query_results] 请求参数: {result_query_request.model_dump_json(ensure_ascii=False, indent=2)}")
+
         if is_ee():
             if not await check_action_access(  # type: ignore
                 user_uid=request.state.user_id,
@@ -1196,6 +1199,9 @@ class EvaluationsRouter:
             count=len(results),
             results=results,
         )
+
+        # 打印响应结果
+        # log.info(f"[query_results] 响应结果: {results_response.model_dump_json(ensure_ascii=False, indent=2)}")
 
         return results_response
 

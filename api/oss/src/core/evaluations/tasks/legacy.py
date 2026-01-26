@@ -3,7 +3,6 @@ from uuid import UUID
 from json import dumps
 
 from fastapi import Request
-
 from oss.src.utils.helpers import parse_url, get_slug_from_name_and_id
 from oss.src.utils.logging import get_module_logger
 from oss.src.utils.common import is_ee
@@ -698,6 +697,7 @@ async def evaluate_batch_testset(
     Returns:
         None
     """
+    log.info("[evaluate_batch_testset_impl] start...")
     request = Request(
         scope={
             "type": "http",
@@ -951,6 +951,7 @@ async def evaluate_batch_testset(
         # ----------------------------------------------------------------------
 
         # create invocation results --------------------------------------------
+        # log.info(f"[evaluate_batch_testset_impl] invocations: {invocations}")
         results_create = [
             EvaluationResultCreate(
                 run_id=run_id,

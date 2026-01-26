@@ -114,6 +114,7 @@ export type CreateEvaluationData =
           correct_answer_column: string
           name: string
       }
+// todo 自动评测触发函数
 export const createEvaluation = async (appId: string, evaluation: CreateEvaluationData) => {
     const {projectId} = getProjectValues()
 
